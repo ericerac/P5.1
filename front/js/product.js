@@ -33,48 +33,42 @@ productsTab
 .then(response => {
     if(response.ok){
         response.json()
-.then(productsTabData => {
-   
-    console.log(productsTabData)
-     productSelect = productsTabData.find((a)=> a._id === productSelectId);
-    console.log(productSelect)
+    .then(productsTabData => {
     
+        console.log(productsTabData)
+         productSelect = productsTabData.find((a)=> a._id === productSelectId);
+        console.log(productSelect)
 
-   // ProductQuantity(productSelect,quantity)
 
-// recuperation des data dans des variables
+       // ProductQuantity(productSelect,quantity)
 
-    let productImage = productSelect.imageUrl;
-    let imageAltText =  productSelect.altTxt;
-    let productTitle = productSelect.name;
-    let productPrice = productSelect.price;
-    let productDescription = productSelect.description;
-    let productColors = `${productSelect.colors}`;
-    let colorsOptions = productColors; 
-    let colorsInsert = "";
-  
-// insertion dans le html des contenus
+    // recuperation des data dans des variables
 
-    image.innerHTML = `<img src="${productImage}" alt = "${imageAltText}">` ;   
-    price.textContent = productPrice;
-    productName.textContent = productTitle;
-    description.textContent = productDescription;
-
-    let result =  colorsOptions.split(",");
+        let productImage = productSelect.imageUrl;
+        let imageAltText =  productSelect.altTxt;
+        let productTitle = productSelect.name;
+        let productPrice = productSelect.price;
+        let productDescription = productSelect.description;
+        let productColors = `${productSelect.colors}`;
+        let colorsOptions = productColors; 
+        let colorsInsert = "";
     
+    // insertion dans le html des contenus
 
-    for (let col of result) {
-        colorsInsert += `<option value="${col}">${col}</option>`};
-        color.innerHTML = colorsInsert;
-    
- 
-    // recuperation  couleur selectionnée
+        image.innerHTML = `<img src="${productImage}" alt = "${imageAltText}">` ;   
+        price.textContent = productPrice;
+        productName.textContent = productTitle;
+        description.textContent = productDescription;
 
-   //  color.addEventListener(`change`, ()=> {
-   //     let optionSelectValue = color.selectedIndex;
-   //     return (optionSelectValue);
-   // })     
-} 
+        let result =  colorsOptions.split(",");
+
+
+        for (let col of result) {
+            colorsInsert += `<option value="${col}">${col}</option>`
+        };
+            color.innerHTML = colorsInsert;
+
+    } 
 
 )}
 else {
@@ -93,14 +87,13 @@ ProductSelectquantity = document.querySelector("#quantity").value;
 
 // ---------------- Gestion Panier -------------------
 
-// recuperation  des "couleur id et quantité" de selectionnées
 
 function saveCart(cart) {
     localStorage.setItem("panier" , JSON.stringify(cart));
 };
 
 let itemQuantity2 = document.querySelectorAll(".itemQuantity");
-//let cart =[];
+
 console.log(cart);
 
 function  getCart() {
@@ -125,19 +118,15 @@ function  getCart() {
      console.log(product);
      console.log(productFind);
      if (product.quantity > 100 ){
-        alert("Pour les commandes supèrieures a 100 unités, veuillez contactez notre service reservé aux proffessionnels afin de profiter de tarifs préférenciels.")
-       // product.quantity = 0;
+        alert("Pour les commandes supèrieures a 100 unités, veuillez contactez notre service reservé aux proffessionnels afin de profiter de tarifs préférenciels.");  
         return false
-        //removeProduct(product);
     }
      if(productFind != undefined){
         productFind.quantity = Number(productFind.quantity) + Number(product.quantity);
-        console.log(productFind);
-        
+        console.log(productFind);        
          } else{
             cart.push(product)
-        }
-     
+        }    
       saveCart(cart);
   }
 
@@ -172,7 +161,7 @@ AddToCartBtn.addEventListener("click",(e) =>{
      color: color.value,
      quantity: quantities,
    }
-   //ProductQuantity(form);   
+     
     addCart(form);
      
  });

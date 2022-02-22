@@ -1,7 +1,20 @@
 
 "use strict"
-// import { export } from "module-name";
 
+//const { stringify } = require("querystring");
+
+// import { export } from "module-name";
+const urlData = window.location.search;
+ const urlParams = new URLSearchParams(urlData);
+
+ const productSelectId = urlParams.get(`id`);
+
+ console.log(productSelectId);
+ 
+ if(productSelectId != null){
+   let displayId = document.querySelector("#orderId");
+   displayId.textContent = productSelectId;
+ }
 
 // recuperation du panier
  let panier = JSON.parse(localStorage.getItem("panier"));
@@ -73,12 +86,12 @@ const cartTotalQuantity = ()=> {
 
 
 let totalPrice = document.querySelector("#totalPrice");
-let sumall ="";
+let sommeTotal ="";
 const prix = () => {  
   console.log(totalPrice);
-   sumall = myArray.map(item => item.total).reduce((prev, curr) => prev + curr);
-  console.log(sumall); // retourne la somme des prix de tout les elements
-  totalPrice.textContent = sumall;     
+  sommeTotal = myArray.map(item => item.total).reduce((prev, curr) => prev + curr);
+  console.log(sommeTotal); // retourne la somme des prix de tout les elements
+  totalPrice.textContent = sommeTotal;     
   };
   
 // Suppression du produit du panier 
@@ -110,15 +123,16 @@ const delete_btn = () => {
   }
 }
 //--------------------------
+
+// FONCTION PANIER
 function removeProduct(product){
   
   cart = panier.filter(p => p.id != product.id && p.color != product.color);
   myArray = myArray.filter(e => e.id !=product.id && e.color != product.color);
 console.log(myArray);
   saveCart(cart);
-  
 };
-// FONCTION PANIER
+
 function saveCart(cart) {
   localStorage.setItem("panier" , JSON.stringify(cart));
 };
@@ -145,6 +159,7 @@ function addCart(product){
    saveCart(cart);
 }
 // -------------------------------------------
+
 // quantité totale de produit
 const totalProductQuantity = (a,b)=> a+b;
 //----------------------------
@@ -211,7 +226,7 @@ const autre = ()=> {
         
         console.log(idd);
 
-        const sumall = myArray.map(item => item.total).reduce((prev, curr) => prev + curr, 0);
+        //const sommeTotal = myArray.map(item => item.total).reduce((prev, curr) => prev + curr, 0);
         
         
        
@@ -231,7 +246,7 @@ const autre = ()=> {
 
 // recup via l'api des donnees des produits selectionnés
 
-let products = [];
+//let products = [];
 let productId = new Array;
 let cartPrice =[];
 let productCartData=[];
@@ -251,7 +266,7 @@ let myArray = new Array;
             let productCartData ="";
         
             for (let i of panier){
-              // (name, id, color, quantity, price, total){
+              
                 
               
                   productCartData = productsTabData.find((p) => p._id == i.id);               
@@ -291,15 +306,7 @@ const cartCommande =  (i,productCartData) => {
   console.log(myArray);       
 
 }
-
-
-  
-  
-//console.table(cartCommande);  
-      
-      
-       
-
+//------------------------------------------------
  // Insertion des données des produits du panier dans le html
 
 const display = (productCartData,i)=>{
@@ -440,8 +447,6 @@ const emailCheck =(value)=>{
 let inputs = document.querySelectorAll('input[type="text"],[type="email"]');
 
 
-
-
 // Verification du formulaire
 
   const inputForm = inputs.forEach((input) =>{
@@ -473,7 +478,7 @@ switch(e.target.id){
    })
  });
  //---------------------------
- 
+ //  FIN FORMULAIRE
  
 
 commande.prototype.toString = function commandeToString() {
@@ -481,73 +486,78 @@ commande.prototype.toString = function commandeToString() {
 };
 
  // Recupération des données du formulaire
-let dataForm ="";
-let ordered = document.querySelector("#order"); // btn commander
-
-ordered.addEventListener("click",(e) =>{
-   e.preventDefault(); 
-   dataForm = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    address: address.value,
-    city: city.value,
-    email:email.value
-  }
-  // vérification du remplissage total du formulaire
-   if(dataForm.firstName == "" || dataForm.lastName == "" ||  dataForm.city == "" || dataForm.email == ""){
-     alert("Veuillez remplir le formulaire");
-     return false
-   };
-
-   let fenetreConfirm = window.confirm(("Confirmer votre commande"+ " " + myArray.toString()+ " " + `Total commande: ${sumall} €`));
-   if (fenetreConfirm=== false) {
-    return false;
-   }   
-     
-    send();
-    console.log(dataForm);
-
-    
-    
-    console.log(data);
-}); 
+ 
+let contact =[];
+let products = productId;
 
 // fonction d'envoi des données vers l'API.
-let send = () =>{
+let send = (sendData) =>{
   fetch("http://localhost:3000/api/products/order",{
     method:"POST",    
+    body:JSON.stringify(sendData),
+    
     headers:{
-      "Accept":"application/json",
+     // "Accept":"application/json",
       "Content-Type":"application/json",
     },
-    body:JSON.stringify(dataForm,productId),
+    
   })
   .then(response => response.json())
    .then(data => {
+     console.log(data);
+    
        window.location = `../html/confirmation.html?id=${data.orderId}`;
        localStorage.clear();
        return false
    })
   .catch(err => alert("Il semble qu'il y ait l'erreur : " + err));
 }
-//  FIN FORMULAIRE
 
+
+
+let ordered = document.querySelector("#order"); // btn commander
+let form = document.querySelector(".card__order__form__submit")
+ordered.addEventListener("click",(e) =>{
+  e.preventDefault(); 
+  contact = {
+   firstName: firstName.value,
+   lastName: lastName.value,
+   address: address.value,
+   city: city.value,
+   email:email.value
+ }
+ let sendData = {
+  contact,
+  products
+}
+ console.log(contact,products); // Object { firstName: "jkjlkn", lastName: "mnnmn", address: "jnhjbjkb", city: "nnkjbm", email: "njnbjkb@ggg.cc" }
+ console.log(sendData); // Object { firstName: "jkjlkn", lastName: "mnnmn", address: "jnhjbjkb", city: "nnkjbm", email: "njnbjkb@ggg.cc" }
+ 
+                               // Array [ "415b7cacb65d43b2b5c1ff70f3393ad1", "034707184e8e4eefb46400b5a3774b5f" ]
+
+if(cart.length < 1){
+  alert(" Votre panier est vide. ")
+  return false
+}
+ // vérification du remplissage de tout les champs du formulaire
+  if(contact.firstName == "" || contact.lastName == "" ||  contact.address == "" ||  contact.city == "" || contact.email == ""){
+    alert("Veuillez remplir tout les champs du formulaire");
+    return false
+  };
+  let fenetreConfirm = window.confirm(("Confirmer votre commande"+ " " + myArray.toString()+ " " + `Total commande: ${sommeTotal} €`));
+  if (fenetreConfirm=== false) {
+   return false;
+  }   
+  
+   send(sendData);
+     //console.log(data);
+}); 
+
+
+//---------------------
 
 
 //--------------------------------------------------------------
-
-// Recuperation de la quantité de produits
-
-
-
-
-
- 
-
-
-// Récupération prix des produits
-
-
 
 
 
