@@ -1,33 +1,34 @@
 
 "use strict"
-
-//const { stringify } = require("querystring");
-
 // import { export } from "module-name";
-const urlData = window.location.search;
+
+// récupération nº commande dans l'URL de validation
+
+ const urlData = window.location.search;
  const urlParams = new URLSearchParams(urlData);
-
  const productSelectId = urlParams.get(`id`);
-
- console.log(productSelectId);
- 
+  console.log(productSelectId);
+ // Affichage Nº commande aprés validation
  if(productSelectId != null){
-   let displayId = document.querySelector("#orderId");
-   displayId.textContent = productSelectId;
- }
+    let displayId = document.querySelector("#orderId");
+    displayId.textContent = productSelectId;
+  }
+
+//-----------------------------
 
 // recuperation du panier
- let panier = JSON.parse(localStorage.getItem("panier"));
-console.log(panier);
+ let cart = JSON.parse(localStorage.getItem("panier"));
+console.log(cart);
 console.log(JSON.parse(localStorage.getItem("panier")));
-if ( panier == null){
-  panier = [];
+if ( cart == null){
+  cart = [];
 }
 //-------------------------
 
 // RECUPERATION DES ID COLOR QUANTITY DE CHAQUE PRODUIT DU PANIER
 let totalQuantity = document.querySelector("#totalQuantity");
 
+//Class de données produits au panier
 let commande = class CartProductCommande {
 	constructor(productName, id, color, quantity, price, total){
 		this.productName = productName;
@@ -38,59 +39,34 @@ let commande = class CartProductCommande {
 		this.total = total;
 } }
 
-//let productName = "";
-let id = "";
-let listId = [];
-let listColor = [];
-let listQuantity= [];
-let cart = [];
-let colorInsert ="";
-let idInsert ="";
-let QuantityInsert ="";
-
- 
-  for ( let i of panier)
- {
-   cart.push(i);
-   id = (i.id);
-   listColor.push(i.color);
-   listQuantity.push(i.quantity);
- };
+let cartArray = new Array;
 console.log(cart);
 
-
-
-
- let quantite ="";
  let quantity ="";
  
-let quant = [];
-
-let cartProductPrice = [];
-const totalCartProduct = "";
-
 // recuperation quantitée
 
 const itemQuantity2 = document.getElementsByClassName(".itemQuantity");
+
 // total quantité de produits
 const cartTotalQuantity = ()=> {
     let total = 0;
-    for ( let e of myArray){
+    for ( let e of cartArray){
       total += e.quantity;
       totalQuantity.textContent = total;
      }
-     console.log(myArray);
+     console.log(cartArray);
      
   };
-
-
-
+// total prix des produits de la commande
 let totalPrice = document.querySelector("#totalPrice");
 let sommeTotal ="";
+
 const prix = () => {  
   console.log(totalPrice);
-  sommeTotal = myArray.map(item => item.total).reduce((prev, curr) => prev + curr);
+  sommeTotal = cartArray.map(item => item.total).reduce((a, b) => a + b);
   console.log(sommeTotal); // retourne la somme des prix de tout les elements
+
   totalPrice.textContent = sommeTotal;     
   };
   
@@ -100,10 +76,6 @@ let deleteBtn = document.getElementsByClassName('deleteItem');
   console.log(deleteBtn);
 
 const delete_btn = () => {
-  let ite = myArray.keys();
-  for (let key of ite) {
-    console.log(key);
-  }
   
   for ( let b of deleteBtn){
       
@@ -113,12 +85,13 @@ const delete_btn = () => {
     return false;
   }
       let parent = d.target.closest('.cart__item');
-      let prodFound = panier.find((p) => p.id == parent.dataset.id && p.color == parent.dataset.color);
-      console.log(prodFound);
-      removeProduct(prodFound)
-      console.log(myArray);
+      let productFound = cart.find((p) => p.id == parent.dataset.id && p.color == parent.dataset.color);
+      console.log(productFound);
+      removeProduct(productFound)
+      console.log(cartArray);
       parent.remove();
       cartTotalQuantity ();
+      prix();
     })
   }
 }
@@ -126,11 +99,13 @@ const delete_btn = () => {
 
 // FONCTION PANIER
 function removeProduct(product){
-  
-  cart = panier.filter(p => p.id != product.id && p.color != product.color);
-  myArray = myArray.filter(e => e.id !=product.id && e.color != product.color);
-console.log(myArray);
+  console.log(cartArray);
+  cart = cart.filter(p => p.id !== product.id && p.color !== product.color);
+  cartArray = cartArray.filter(e => e.id !== product.id && e.color !== product.color);
+  console.log(cartArray);
+  console.log(cart);
   saveCart(cart);
+  ;
 };
 
 function saveCart(cart) {
@@ -138,9 +113,8 @@ function saveCart(cart) {
 };
 
 function addCart(product){       
- console.log(cart)
+ 
   let productFind = cart.find(p => p.id == product.id && p.color == product.color);
-  console.log(product);
   console.log(productFind);
   if (product.quantity > 100){
      alert("Pour les commandes supèrieures a 100 unités, veuillez contactez notre service reservé aux proffessionnels afin de profiter de tarifs préférenciels.")
@@ -151,7 +125,6 @@ function addCart(product){
   if(productFind != undefined){
      productFind.quantity = Number(product.quantity);
      console.log(productFind);
-     
       } else{
          cart.push(product)
      }
@@ -166,94 +139,64 @@ const totalProductQuantity = (a,b)=> a+b;
 
 // Prix total de chaque produit
 const totalPriceP = (a,b) => {
-  for ( let e of myArray){
+  for ( let e of cartArray){
      e.total = (e.quantity*e.price)
     }
-    console.log(myArray);
     prix();
 };
 //------------------------------
-// recuperation des modification de quntité  des produit
+// recuperation des modification de quantité  des produit
 const autre = ()=> {
   let itemQuantity2 = document.querySelectorAll(".itemQuantity");
     for (let e of itemQuantity2) {
      
+      // ecoute les inputs quantity
        e.addEventListener("change", (d) => {
+
         if ( d.target.value <= 0){
           alert("la quantité ne peut être infèrieure ou égale à 0");
           d.target.value = 0;
           return false
-      }
-        console.log(e);
-        let blocAncetre = d.target.closest('.cart__item');
-        console.log(blocAncetre);
-        let grandId = blocAncetre.dataset.id;
-        console.log(grandId);
-       
-        //let itemParent = d.target.closest('.itemQuantity');
-        //console.log(itemParent);
-       
-        console.log(e.value);
-        console.log(d.target);   
-         
+        }
         
-        
-        const changementQ = myArray.map(item => item.id == grandId) ; 
-        console.log(changementQ); // retourne true  sur l'element modifié et false sur les autres
-
-        
-        const idd = myArray.find(item => item.id == grandId);
-        console.log(idd); // retourne l'objet du produit dont l'element a été  modifié
-        
-
-        console.log(myArray); 
-        idd.quantity =  Number(e.value);   
-        console.log(grandId);
-       
-        let nouvelleValeur = (d.target.value);
-        //d.target.value = Number(itemParent.value);
-        //itemParent.setAttribute("value",nouvelleValeur);
-        //console.log(itemParent);
-
         let itemPadre = d.target.closest('.cart__item__content');
-        console.log(itemPadre);
+        let fils = itemPadre.children;
+        console.log(fils);
+        // localiser la couleur du produit modifié
+        let productCouleur = (itemPadre.childNodes[0].children[1].textContent);
+        console.log(productCouleur);
 
-        let prix = Number(itemPadre.childNodes[0].lastChild.textContent);
-        console.log(prix);
-        console.log(nouvelleValeur); 
-        let quannn = myArray.map(item => item.quantity).reduce((prev, curr) => prev + curr, 0);
-        console.log(quannn);
+       // localiser l'id du produit modifié
+        let blocArticle = d.target.closest('.cart__item');
+        let productId = blocArticle.dataset.id;
+        console.log(blocArticle);
         
-        console.log(idd);
+        
+         
+        const idProduct = cartArray.find(item => item.id == productId && item.color == productCouleur);
+        console.log(idProduct); // retourne l'objet produit dont l'element a été modifié avant modification
+        
+        idProduct.quantity =  Number(e.value);    // modification de la quantité
+        console.log(idProduct) // retourne l'objet produit modifié
 
-        //const sommeTotal = myArray.map(item => item.total).reduce((prev, curr) => prev + curr, 0);
-        
+        // modifie la quntité dans l'HTML
+        let nouvelleValeur = (d.target.value);
+        let itemParent = d.target.closest('.itemQuantity');
+        d.target.value = Number(itemParent.value);
+        itemParent.setAttribute("value",nouvelleValeur);
+
+        let quantite = cartArray.map(item => item.quantity).reduce((a, b) => a + b, 0);
+        totalQuantity.textContent = quantite;
+
+        totalPriceP ();
+        addCart(idProduct);
         
        
-        console.log(myArray);
-        
-        totalPriceP ();
-        addCart(idd);
-       totalQuantity.textContent = quannn;
-      
-        return nouvelleValeur 
-     });
-    }  totalPriceP ();
+    }); totalPriceP ();
   }
- 
-  
-  //console.table(object);
+};
 
-// recup via l'api des donnees des produits selectionnés
-
-//let products = [];
-let productId = new Array;
-let cartPrice =[];
-let productCartData=[];
-let cartImg =[];
-let object1 = "";
-
-let myArray = new Array;
+let products = new Array;
 
  const productsTab =  () => {  fetch("http://localhost:3000/api/products?id=${listId}")
 
@@ -262,36 +205,25 @@ let myArray = new Array;
          response.json()
          .then(productsTabData => {
            
-        
             let productCartData ="";
         
-            for (let i of panier){
-              
-                
+            for (let i of cart){
               
                   productCartData = productsTabData.find((p) => p._id == i.id);               
-                  cartPrice.push(parseInt(productCartData.price))                
-                  productId.push(i.id) ;
+                  //cartPrice.push(parseInt(productCartData.price))                
+                  products.push(i.id) ;
                 
-                  console.log(i.quantity);
-                  console.log(productCartData.id);
-                  console.log(productId);
-                 
-                 
                 display(productCartData,i); //bon
                 cartCommande (i,productCartData); 
             } ;
-            autre();
+            autre(); 
             cartTotalQuantity(); // bon recupère et affiche la quantité de produits
             prix();
-            
             delete_btn();
             totalPriceP();
          })
         }})
-        .then( () => {
-         console.log(productId);
-        }).catch((e) =>{
+        .catch((e) =>{
               alert(e);
         });
                
@@ -299,11 +231,13 @@ let myArray = new Array;
         
       productsTab();
       
+      // récupération et envoi des données produit dans l'array cartArray 
 const cartCommande =  (i,productCartData) => {
 
   let object1 = new commande (productCartData.name,i.id,i.color,Number(i.quantity),productCartData.price);
-  myArray.push(object1);
-  console.log(myArray);       
+  cartArray.push(object1);
+  console.log(object1);       
+  console.log(cartArray);       
 
 }
 //------------------------------------------------
@@ -394,16 +328,16 @@ const display = (productCartData,i)=>{
 // pointage Span Error Messages formulaire
 
     let firstNameErrorMsg = document.querySelector("#firstNameErrorMsg"); 
-    let  lastNameErrorMsg = document.querySelector("#lastNameErrorMsg");
-    let  addressErrorMsg = document.querySelector("#addressErrorMsg");
-    let  cityErrorMsg = document.querySelector("#cityErrorMsg");
+    let lastNameErrorMsg = document.querySelector("#lastNameErrorMsg");
+    let addressErrorMsg = document.querySelector("#addressErrorMsg");
+    let cityErrorMsg = document.querySelector("#cityErrorMsg");
     let emailErrorMsg = document.querySelector("#emailErrorMsg");
 
     
 // function de validation des imputs du formulaire
 
 const firstNameCheck =(value)=>{ 
-  if(!value.match(/^[a-zA-Z-._àâéèêô´` ñÑî'ùûïÏäÄçÀÂÉÈÔÙÛÇ]*$/)){
+  if(!value.match(/^[a-zA-Z-._àâéèêô´` ñÑî'ùûïÏäëüöÖÄçÀÂÉÈÔÙÛÇ]*$/)){
     firstNameErrorMsg.textContent="veuillez saisir uniquement des lettres et tirets. (pas de chiffres ni caractères spéciaux).";
   }else{
     firstNameErrorMsg.textContent="";
@@ -411,7 +345,7 @@ const firstNameCheck =(value)=>{
 };
 
 const lastNameCheck =(value)=>{
-  if(!value.match(/^[a-zA-Z-._àâéèêô´` ñÑî'ùûïÏäÄçÀÂÉÈÔÙÛÇ]*$/)){
+  if(!value.match(/^[a-zA-Z-._àâéèêô´`¨ ñÑî'ùûïÏäëüöÖÄçÀÂÉÈÔÙÛÇ]*$/)){
     lastNameErrorMsg.textContent="veuillez saisir uniquement des lettres et tirets (pas de chiffres ni caractères spéciaux).";
   }else{
     lastNameErrorMsg.textContent="";
@@ -435,7 +369,7 @@ const cityCheck =(value)=> {
 };
 
 const emailCheck =(value)=>{
-  if(!value.match(/^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/)){
+  if(!value.match(/^([\w\.\-][\&\+)@([\w\-]+)((\.(\w){2,3})+)$/)){
     emailErrorMsg.textContent="veuillez saisir une adresse électronique valide.";
   }else{
   emailErrorMsg.textContent="";
@@ -486,9 +420,7 @@ commande.prototype.toString = function commandeToString() {
 };
 
  // Recupération des données du formulaire
- 
 let contact =[];
-let products = productId;
 
 // fonction d'envoi des données vers l'API.
 let send = (sendData) =>{
@@ -496,8 +428,8 @@ let send = (sendData) =>{
     method:"POST",    
     body:JSON.stringify(sendData),
     
-    headers:{
-     // "Accept":"application/json",
+      headers:{
+      "Accept":"application/json",
       "Content-Type":"application/json",
     },
     
@@ -519,6 +451,7 @@ let ordered = document.querySelector("#order"); // btn commander
 let form = document.querySelector(".card__order__form__submit")
 ordered.addEventListener("click",(e) =>{
   e.preventDefault(); 
+
   contact = {
    firstName: firstName.value,
    lastName: lastName.value,
@@ -526,37 +459,43 @@ ordered.addEventListener("click",(e) =>{
    city: city.value,
    email:email.value
  }
- let sendData = {
+ 
+  let sendData = {
   contact,
   products
 }
- console.log(contact,products); // Object { firstName: "jkjlkn", lastName: "mnnmn", address: "jnhjbjkb", city: "nnkjbm", email: "njnbjkb@ggg.cc" }
- console.log(sendData); // Object { firstName: "jkjlkn", lastName: "mnnmn", address: "jnhjbjkb", city: "nnkjbm", email: "njnbjkb@ggg.cc" }
  
-                               // Array [ "415b7cacb65d43b2b5c1ff70f3393ad1", "034707184e8e4eefb46400b5a3774b5f" ]
-
-if(cart.length < 1){
+ console.log(sendData); // Object { firstName: "jkjlkn", lastName: "mnnmn", address: "jnhjbjkb", city: "nnkjbm", email: "njnbjkb@ggg.cc" }
+                         // Array [ "415b7cacb65d43b2b5c1ff70f3393ad1", "034707184e8e4eefb46400b5a3774b5f" ]
+  if(cart.length < 1){
   alert(" Votre panier est vide. ")
   return false
-}
+  }
  // vérification du remplissage de tout les champs du formulaire
   if(contact.firstName == "" || contact.lastName == "" ||  contact.address == "" ||  contact.city == "" || contact.email == ""){
     alert("Veuillez remplir tout les champs du formulaire");
     return false
   };
-  let fenetreConfirm = window.confirm(("Confirmer votre commande"+ " " + myArray.toString()+ " " + `Total commande: ${sommeTotal} €`));
+  let fenetreConfirm = window.confirm(("Confirmer votre commande"+ " " + cartArray.toString()+ " " + `Total commande: ${sommeTotal} €`));
   if (fenetreConfirm=== false) {
    return false;
   }   
-  
    send(sendData);
      //console.log(data);
 }); 
 
-
+let nnn = 0;
 //---------------------
 
-
+const testPriceTotal = () => {
+    const testNumber = sommeTotal;
+    if(testNumber == Number){
+      console.log(true)
+    }else {
+      console.log("Erreur expect Number ")
+    }
+}
+testPriceTotal();
 //--------------------------------------------------------------
 
 
