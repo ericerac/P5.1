@@ -1,7 +1,7 @@
 
 let cardsProductsIndex = document.getElementById("items");
 
-    fetch("http://localhost:3000/api/products/#{productsId}")
+   let getProduct= fetch("http://localhost:3000/api/products/#{productsId}")
     .then((res) => res.json()
     .then(data => {
         let product = "";
@@ -23,6 +23,6 @@ let cardsProductsIndex = document.getElementById("items");
             }
             cardsProductsIndex.innerHTML += product;
             }));
-       
+       getProduct();
             
      

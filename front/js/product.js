@@ -16,9 +16,9 @@ let AddToCartBtn = document.querySelector("#addToCart");
 // Récupération de l'Id du produit contenu dans l'URL
 
  const urlData = window.location.search;
- const urlParams = new URLSearchParams(urlData);
+ //const urlParams = new URLSearchParams(urlData);
 
- const productSelectId = urlParams.get(`id`);
+ const productSelectId = new URLSearchParams(urlData).get(`id`);
 
  console.log(productSelectId);
 //-----------
