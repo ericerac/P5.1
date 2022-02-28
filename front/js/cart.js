@@ -48,15 +48,14 @@ console.log(cart);
 
 const itemQuantity2 = document.getElementsByClassName(".itemQuantity");
 
-// total quantité de produits
+// total products quantity
 const cartTotalQuantity = ()=> {
     let total = 0;
     for ( let e of cartArray){
       total += e.quantity;
       totalQuantity.textContent = total;
      }
-     console.log(cartArray);
-     
+     console.log(cartArray);  
   };
 // total prix des produits de la commande
 let totalPrice = document.querySelector("#totalPrice");
@@ -75,43 +74,53 @@ const prix = () => {
 let deleteBtn = document.getElementsByClassName('deleteItem');
   console.log(deleteBtn);
 
-const delete_btn = () => {
-  
+const delete_btn = () => {  
+
   for ( let b of deleteBtn){
       
     b.addEventListener("click", (d)=> {
+      d.preventDefault();
       let confirm = window.confirm ("Voulez-vous vraiment supprimer cet article ?")
-  if ( confirm == false){
-    return false;
-  }
-      let parent = d.target.closest('.cart__item');
-      let productFound = cart.find((p) => p.id == parent.dataset.id && p.color == parent.dataset.color);
-      console.log(productFound);
-      removeProduct(productFound)
-      console.log(cartArray);
-      parent.remove();
-      cartTotalQuantity ();
-      prix();
+
+        if ( confirm == false){
+          return false;
+        }
+          let parent = d.target.closest('.cart__item');
+          // console.log(parent.dataset.color);
+          let productFound = cart.find((p) => p.id == parent.dataset.id && p.color == parent.dataset.color);
+          //console.log(productFound);
+          //console.log(cartArray);
+          removeProduct(productFound)
+          //console.log(cartArray);
+          parent.remove();
+          cartTotalQuantity ();
+          prix();
     })
   }
 }
-//--------------------------
+//--------------------------------
 
-// FONCTION PANIER
+// -------FUNCTIONS CART----------
+
+// Remove product of cart
 function removeProduct(product){
-  console.log(cartArray);
-  cart = cart.filter(p => p.id !== product.id && p.color !== product.color);
-  cartArray = cartArray.filter(e => e.id !== product.id && e.color !== product.color);
-  console.log(cartArray);
-  console.log(cart);
+  //console.log(cartArray);
+  //console.log(product.id);
+  //console.log(product.color);
+ 
+  //console.log(removeProd);
+  cart = cart.filter(p => p.color !== product.color ||  p.id !== product.id  );
+  cartArray = cartArray.filter(e =>  e.color !== product.color || e.id !== product.id );
+  
+  //console.log(cartArray);
+  //console.log(cart);
   saveCart(cart);
-  ;
 };
-
+ // save cart ------
 function saveCart(cart) {
   localStorage.setItem("panier" , JSON.stringify(cart));
 };
-
+ // add product to cart -----
 function addCart(product){       
  
   let productFind = cart.find(p => p.id == product.id && p.color == product.color);
@@ -133,24 +142,25 @@ function addCart(product){
 }
 // -------------------------------------------
 
-// quantité totale de produit
+// quantité totale de produit -----
 const totalProductQuantity = (a,b)=> a+b;
 //----------------------------
 
-// Prix total de chaque produit
-const totalPriceP = (a,b) => {
+// Prix total de chaque produit -----
+const totalPriceProduct = (a,b) => {
   for ( let e of cartArray){
      e.total = (e.quantity*e.price)
     }
     prix();
 };
 //------------------------------
-// recuperation des modification de quantité  des produit
-const autre = ()=> {
+
+// Rebrieve new products quantity -----
+const getItemQuantity = ()=> {
   let itemQuantity2 = document.querySelectorAll(".itemQuantity");
     for (let e of itemQuantity2) {
      
-      // ecoute les inputs quantity
+      // Listening inputs quantity -----
        e.addEventListener("change", (d) => {
 
         if ( d.target.value <= 0){
@@ -158,28 +168,17 @@ const autre = ()=> {
           d.target.value = 0;
           return false
         }
-        
-        let itemPadre = d.target.closest('.cart__item__content');
-        let fils = itemPadre.children;
-        console.log(fils);
-        // localiser la couleur du produit modifié
-        let productCouleur = (itemPadre.childNodes[0].children[1].textContent);
-        console.log(productCouleur);
-
-       // localiser l'id du produit modifié
-        let blocArticle = d.target.closest('.cart__item');
-        let productId = blocArticle.dataset.id;
-        console.log(blocArticle);
-        
-        
+        let productId = d.target.closest('.cart__item').dataset.id;
+        let productCouleur = d.target.closest('.cart__item').dataset.color;
+        // console.log(productCouleur, productId);
          
         const idProduct = cartArray.find(item => item.id == productId && item.color == productCouleur);
-        console.log(idProduct); // retourne l'objet produit dont l'element a été modifié avant modification
+        // console.log(idProduct); // retourne l'objet produit dont l'element a été modifié avant modification
         
         idProduct.quantity =  Number(e.value);    // modification de la quantité
-        console.log(idProduct) // retourne l'objet produit modifié
+        //console.log(idProduct) // retourne l'objet produit modifié
 
-        // modifie la quntité dans l'HTML
+        // modifie la quantité dans l'HTML
         let nouvelleValeur = (d.target.value);
         let itemParent = d.target.closest('.itemQuantity');
         d.target.value = Number(itemParent.value);
@@ -188,11 +187,11 @@ const autre = ()=> {
         let quantite = cartArray.map(item => item.quantity).reduce((a, b) => a + b, 0);
         totalQuantity.textContent = quantite;
 
-        totalPriceP ();
+        totalPriceProduct ();
         addCart(idProduct);
         
        
-    }); totalPriceP ();
+    }); totalPriceProduct ();
   }
 };
 
@@ -216,11 +215,11 @@ let products = new Array;
                 display(productCartData,i); //bon
                 cartCommande (i,productCartData); 
             } ;
-            autre(); 
-            cartTotalQuantity(); // bon recupère et affiche la quantité de produits
+            getItemQuantity(); 
+            cartTotalQuantity(); //  recupère et affiche la quantité de produits
             prix();
             delete_btn();
-            totalPriceP();
+            totalPriceProduct();
          })
         }})
         .catch((e) =>{
@@ -236,8 +235,8 @@ const cartCommande =  (i,productCartData) => {
 
   let object1 = new commande (productCartData.name,i.id,i.color,Number(i.quantity),productCartData.price);
   cartArray.push(object1);
-  console.log(object1);       
-  console.log(cartArray);       
+  // console.log(object1);       
+  // console.log(cartArray);       
 
 }
 //------------------------------------------------
@@ -414,13 +413,13 @@ switch(e.target.id){
  //---------------------------
  //  FIN FORMULAIRE
  
-
+// convertion en string pour l'affichage window.comfirn commande
 commande.prototype.toString = function commandeToString() {
-  return `${this.productName}: ${this.color}, quantité ${this.quantity} , Total ${this.total} €.`
+  return `${this.productName}: ${this.color}, quantité ${this.quantity} , Total ${this.total} €./ `
 };
 
- // Recupération des données du formulaire
-let contact =[];
+ 
+
 
 // fonction d'envoi des données vers l'API.
 let send = (sendData) =>{
@@ -449,9 +448,11 @@ let send = (sendData) =>{
 
 let ordered = document.querySelector("#order"); // btn commander
 let form = document.querySelector(".card__order__form__submit")
+let contact =[];
+
 ordered.addEventListener("click",(e) =>{
   e.preventDefault(); 
-
+// Recupération des données du formulaire
   contact = {
    firstName: firstName.value,
    lastName: lastName.value,
@@ -476,7 +477,7 @@ ordered.addEventListener("click",(e) =>{
     alert("Veuillez remplir tout les champs du formulaire");
     return false
   };
-  let fenetreConfirm = window.confirm(("Confirmer votre commande"+ " " + cartArray.toString()+ " " + `Total commande: ${sommeTotal} €`));
+  let fenetreConfirm = window.confirm(("Confirmer votre commande"+ ":  " + cartArray.toString()+ " " + `Total commande: ${sommeTotal} €`));
   if (fenetreConfirm=== false) {
    return false;
   }   
@@ -484,18 +485,18 @@ ordered.addEventListener("click",(e) =>{
      //console.log(data);
 }); 
 
-let nnn = 0;
+
 //---------------------
 
-const testPriceTotal = () => {
-    const testNumber = sommeTotal;
-    if(testNumber == Number){
-      console.log(true)
-    }else {
-      console.log("Erreur expect Number ")
-    }
-}
-testPriceTotal();
+// const testPriceTotal = () => {
+//     const testNumber = sommeTotal;
+//     if(testNumber == Number){
+//       console.log(true)
+//     }else {
+//       console.log("Erreur expect Number ")
+//     }
+// }
+// testPriceTotal();
 //--------------------------------------------------------------
 
 

@@ -16,17 +16,16 @@ let AddToCartBtn = document.querySelector("#addToCart");
 // Récupération de l'Id du produit contenu dans l'URL
 
  const urlData = window.location.search;
- //const urlParams = new URLSearchParams(urlData);
-
+ 
  const productSelectId = new URLSearchParams(urlData).get(`id`);
 
  console.log(productSelectId);
 //-----------
+
 let cart = [];
-
 let productSelect=[];
-// récupération dans l'API  des données du produit sélectionné
 
+// récupération dans l'API  des données du produit sélectionné
 const productsTab = fetch("http://localhost:3000/api/products?id=${productSelectId}");
  
 productsTab
@@ -35,39 +34,11 @@ productsTab
         response.json()
     .then(productsTabData => {
     
-        console.log(productsTabData)
+        console.log(productsTabData);
          productSelect = productsTabData.find((a)=> a._id === productSelectId);
-        console.log(productSelect)
-
-
-       // ProductQuantity(productSelect,quantity)
-
-    // recuperation des data dans des variables
-
-        let productImage = productSelect.imageUrl;
-        let imageAltText =  productSelect.altTxt;
-        let productTitle = productSelect.name;
-        let productPrice = productSelect.price;
-        let productDescription = productSelect.description;
-        let productColors = `${productSelect.colors}`;
-        let colorsOptions = productColors; 
-        let colorsInsert = "";
-    
-    // insertion dans le html des contenus
-
-        image.innerHTML = `<img src="${productImage}" alt = "${imageAltText}">` ;   
-        price.textContent = productPrice;
-        productName.textContent = productTitle;
-        description.textContent = productDescription;
-
-        let result =  colorsOptions.split(",");
-
-
-        for (let col of result) {
-            colorsInsert += `<option value="${col}">${col}</option>`
-        };
-            color.innerHTML = colorsInsert;
-
+        console.log(productSelect);
+        
+       display(productSelect)
     } 
 
 )}
@@ -76,12 +47,20 @@ else {
 }
 });
 
-color.addEventListener(`change`, ()=> {
-    let optionSelectValue = color.selectedValue;
-    console.log(optionSelectValue);
-    return (optionSelectValue);
-    
-})     
+const display = (productSelect) => {
+    image.innerHTML = `<img src="${productSelect.imageUrl}" alt = "${productSelect.altTxt}">` ;   
+    price.textContent = productSelect.price;
+    productName.textContent = productSelect.name;
+    description.textContent = productSelect.description;
+
+    let colorsInsert = "";
+    for (let col of productSelect.colors) {
+        colorsInsert += `<option value="${col}">${col}</option>`
+    };
+    color.innerHTML = colorsInsert;
+
+}
+
 console.log(productSelectId);
 ProductSelectquantity = document.querySelector("#quantity").value;
 
