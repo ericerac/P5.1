@@ -8,7 +8,7 @@ let image = document.querySelector(".item__img");
 let color = document.querySelector("#colors");
 let colorValue = color.options.value;
 
-// pointage  bouton Ajouter au panier
+// pointage bouton Ajouter au panier
 let AddToCartBtn = document.querySelector("#addToCart");
 
 
@@ -25,7 +25,7 @@ let AddToCartBtn = document.querySelector("#addToCart");
 let cart = [];
 let productSelect=[];
 
-// récupération dans l'API  des données du produit sélectionné
+// récupération dans l'API des données du produit sélectionné
 const productsTab = fetch("http://localhost:3000/api/products?id=${productSelectId}");
  
 productsTab
@@ -46,7 +46,7 @@ else {
     alert("Erreur lors de la requête")
 }
 });
-
+// fonction d'insertion du produit dans le HTML
 const display = (productSelect) => {
     image.innerHTML = `<img src="${productSelect.imageUrl}" alt = "${productSelect.altTxt}">` ;   
     price.textContent = productSelect.price;
@@ -62,19 +62,18 @@ const display = (productSelect) => {
 }
 
 console.log(productSelectId);
+// Retrieve value quantity
 ProductSelectquantity = document.querySelector("#quantity").value;
 
-// ---------------- Gestion Panier -------------------
+// ---------------- Management Cart -------------------
 
-
+// add the product in the localStorage ( Id, Color, Quantity)
 function saveCart(cart) {
     localStorage.setItem("panier" , JSON.stringify(cart));
 };
 
-let itemQuantity2 = document.querySelectorAll(".itemQuantity");
-
 console.log(cart);
-
+// function get cart 
 function  getCart() {
  cart = localStorage.getItem("panier");
   if ( cart === null){
@@ -88,6 +87,7 @@ function  getCart() {
    console.log(cart)  ;
  
 //-----
+    // function add to cart
    function addCart(product){
        
      let cart = getCart();
@@ -97,9 +97,10 @@ function  getCart() {
      console.log(product);
      console.log(productFind);
      if (product.quantity > 100 ){
-        alert("Pour les commandes supèrieures a 100 unités, veuillez contactez notre service reservé aux proffessionnels afin de profiter de tarifs préférenciels.");  
-        return false
+        alert("Pour les commandes supèrieures a 100 unités, veuillez contactez notre service reservé aux proffessionnels afin de profiter de tarifs préférenciels."); 
+        return  false; 
     }
+     // Verification if the product exists, if true, taking only the quantity
      if(productFind != undefined){
         productFind.quantity = Number(productFind.quantity) + Number(product.quantity);
         console.log(productFind);        
@@ -109,36 +110,35 @@ function  getCart() {
       saveCart(cart);
   }
 
- 
-// Ajout de la selection dans le localStorage sous forme d'objet
-
- 
- function removeProduct(product){
+    // remove the product of cart.
+    function removeProduct(product){
      let cart = getCart();
      cart = cart.filter(p => p.id != product.id && p.color != product.color);
      saveCart(cart);
- };
+    };
  
-
+// Add product to cart wiyh Id, color, quantity
 AddToCartBtn.addEventListener("click",(e) =>{
+    e.preventDefault();
+    let quantity = document.querySelector("#quantity");
     let quantities = document.querySelector("#quantity").value;
-     if ( quantities <= 0){
-         alert("la quantité ne peut être infèrieure ou égale à 0")
-         quantities = 0;
+     if ( quantity.value <= 0){
+         alert("La quantité ne peut être égale à 0")
+         quantity.value = 1
          return false
      }
-   let windo =  window.confirm ("votre produit va être ajouté au panier ");
-    if ( windo == false){
+   let avis =  window.confirm ("votre produit va être ajouté au panier ");
+    if ( avis == false){
        
         return false
     }
-     e.preventDefault();
+    
       cart = getCart();
    
    const form = {
      id:  productSelectId,
      color: color.value,
-     quantity: quantities,
+     quantity: quantity.value,
    }
      
     addCart(form);
