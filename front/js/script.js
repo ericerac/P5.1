@@ -1,13 +1,13 @@
 
-// pointage de l'élément
+// grap the DOM item where to display the products
 let cardsProductsIndex = document.getElementById("items");
 
-// requête get pour récupérer les produits
+// request GET to retrieve all products
    let getProduct= fetch("http://localhost:3000/api/products/#{productsId}")
     .then((res) => res.json()
     .then(data => {
         let product = "";
-        for (let kanap of data) { // boucle pour l'affichage des produits
+        for (let kanap of data) { // loop to display products
             
             
            product += 

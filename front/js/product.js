@@ -1,6 +1,5 @@
 
-// Pointage des elements html
-
+// Grap the DOM items
 let productName = document.querySelector("#title");
 let price = document.querySelector("#price");
 let description = document.querySelector("#description");
@@ -8,12 +7,12 @@ let image = document.querySelector(".item__img");
 let color = document.querySelector("#colors");
 let colorValue = color.options.value;
 
-// pointage bouton Ajouter au panier
+// grap the button "ajouter"
 let AddToCartBtn = document.querySelector("#addToCart");
 
 
 
-// Récupération de l'Id du produit contenu dans l'URL
+// Rtrieve the product Id from URL
 
  const urlData = window.location.search;
  
@@ -25,7 +24,7 @@ let AddToCartBtn = document.querySelector("#addToCart");
 let cart = [];
 let productSelect=[];
 
-// récupération dans l'API des données du produit sélectionné
+// Request Get to retireve the data product selected from API
 const productsTab = fetch("http://localhost:3000/api/products?id=${productSelectId}");
  
 productsTab
@@ -46,7 +45,7 @@ else {
     alert("Erreur lors de la requête")
 }
 });
-// fonction d'insertion du produit dans le HTML
+// Display the product in the DOM
 const display = (productSelect) => {
     image.innerHTML = `<img src="${productSelect.imageUrl}" alt = "${productSelect.altTxt}">` ;   
     price.textContent = productSelect.price;
@@ -67,13 +66,13 @@ ProductSelectquantity = document.querySelector("#quantity").value;
 
 // ---------------- Management Cart -------------------
 
-// add the product in the localStorage ( Id, Color, Quantity)
+// add the product to the localStorage ( Id, Color, Quantity)
 function saveCart(cart) {
     localStorage.setItem("panier" , JSON.stringify(cart));
 };
-
 console.log(cart);
-// function get cart 
+
+    // function get cart 
 function  getCart() {
  cart = localStorage.getItem("panier");
   if ( cart === null){
@@ -81,14 +80,10 @@ function  getCart() {
   }else{
   return JSON.parse(cart);
   }
-} ;
+};
 
-   console.log(getCart())  ;
-   console.log(cart)  ;
- 
-//-----
     // function add to cart
-   function addCart(product){
+function addCart(product){
        
      let cart = getCart();
     
@@ -108,14 +103,14 @@ function  getCart() {
             cart.push(product)
         }    
       saveCart(cart);
-  }
+}
 
     // remove the product of cart.
-    function removeProduct(product){
+function removeProduct(product){
      let cart = getCart();
      cart = cart.filter(p => p.id != product.id && p.color != product.color);
      saveCart(cart);
-    };
+};
  
 // Add product to cart wiyh Id, color, quantity
 AddToCartBtn.addEventListener("click",(e) =>{
