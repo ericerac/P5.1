@@ -1,34 +1,30 @@
 
 "use strict"
 
-
+// ---- VALIDATION ORDER------
 // retrieve Url order number
-
  const urlData = window.location.search;
  const urlParams = new URLSearchParams(urlData);
  const productSelectId = urlParams.get(`id`);
   console.log(productSelectId);
+
 // display of the order number after validation
  if(productSelectId != null){
     let displayId = document.querySelector("#orderId");
     displayId.textContent = productSelectId;
   }
-
 //-----------------------------
 
-// retrieve cart content
+// -----RETRIEVE CART CONTENT------
  let cart = JSON.parse(localStorage.getItem("panier"));
 console.log(cart);
 console.log(JSON.parse(localStorage.getItem("panier")));
 if ( cart == null){
   cart = [];
 }
-//-------------------------
+//---------------------------------
 
-// RETRIEVE ID COLOR QUANTITY OF EACH PRODUCT FROM CART
-
-
-//Class cart datas product
+//----Array datas cart products----
 let commande = class CartProductCommande {
 	constructor(productName, id, color, quantity, price, total){
 		this.productName = productName;
@@ -43,7 +39,7 @@ let cartArray = new Array;
 console.log(cart);
 // -----------------------------------
 
-// retrieve products datas cart from API-----
+// -----request GET of data of cart product from API-----
 let products = new Array;
  const productsTab =  () => {  fetch("http://localhost:3000/api/products?id=${listId}")
 
@@ -62,9 +58,9 @@ let products = new Array;
                 displayArticle(productCartData,i);                
                 cartCommande (i,productCartData); 
             } ;
-            // isten the products datas 
+            
             getItemQuantity(); 
-            cartTotalQuantity(); // recupère et affiche la quantité de produits
+            cartTotalQuantity(); 
             prix();
             delete_btn();
             totalPriceProduct();
@@ -78,6 +74,7 @@ let products = new Array;
         
       productsTab();
 //--------------------------------------------   
+
 // total sum of products quantity
 let totalQuantity = document.querySelector("#totalQuantity");
 
@@ -86,15 +83,15 @@ const cartTotalQuantity = ()=> {
     for ( let e of cartArray){
       total += e.quantity;
       displayCartTotalQuantity(total);
-     }
+    }
      console.log(cartArray);  
   };
-// display the total products quantity
+// ----display the total products quantity----.-
   const displayCartTotalQuantity = (a,b)=>{
     totalQuantity.textContent = a;
   }
 
-// total products price---------
+// --------total products price---------
 let totalPrice = document.querySelector("#totalPrice");
 let sommeTotal ="";
 
@@ -104,13 +101,13 @@ const prix = () => {
   
   sommeTotal = cartArray.map(item => item.total).reduce((a, b) => a + b); // return the sum of products
   totalPrice.textContent = sommeTotal;     // display total sum
-  };
+};
   
 // ---------delete product-------------
-
 let deleteBtn = document.getElementsByClassName('deleteItem');
   console.log(deleteBtn);
 
+// ------ listening the delete button-----
 const delete_btn = () => {  
 
   for ( let b of deleteBtn){
@@ -135,7 +132,7 @@ const delete_btn = () => {
 
 //--------------------------------
 
-// -------MANAGEMENT OF CART----------
+// ------- CART MANAGEMENT ----------
 
  // -------save cart ------
 function saveCart(cart) {
@@ -146,15 +143,12 @@ function saveCart(cart) {
 function addCart(product){       
  
   let productFind = cart.find(p => p.id == product.id && p.color == product.color);
-  console.log(productFind);
-
+  //console.log(productFind);
   if(productFind != undefined){
      productFind.quantity = Number(product.quantity);
-     console.log(productFind);
-      } else{
+  } else{
          cart.push(product)
-     }
-  
+    }  
    saveCart(cart);
 }
 
@@ -173,12 +167,10 @@ const cartManagement = () => {
   if(cart.length < 1){
 cartArray =[0];
 totalQuantity.textContent = "";
-  } else {
-    
-  }
+  } 
 }
 //--------------------------------
-// quantité totale de produit -----
+// total of products quantity -----
 const totalProductQuantity = (a,b)=> a+b;
 //----------------------------
 
@@ -191,7 +183,7 @@ const totalPriceProduct = (a,b) => {
 };
 //------------------------------
 
-// ----- Retrieve new product quantity -----
+// ----- Retrieve inputs product quantity -----
 const getItemQuantity = ()=> {
   let itemQuantity = document.querySelectorAll(".itemQuantity");
   
@@ -216,7 +208,7 @@ const getItemQuantity = ()=> {
 
           const idProduct = cartArray.find(item => item.id == productId && item.color == productCouleur);
 
-          idProduct.quantity =  Number(e.value);    // modification de la quantité
+          idProduct.quantity =  Number(e.value);    // modify quantity
 
           let quantite = cartArray.map(item => item.quantity).reduce((a, b) => a + b, 0);
           totalQuantity.textContent = quantite;
@@ -237,7 +229,7 @@ const cartCommande =  (i,productCartData) => {
   // console.log(cartArray);       
 }
 //------------------------------------------------
-// display of cart products in the window
+// -----DISPLAY OF CARD PRODUCT ON THE WINDOW-----
 
 let cartItem = document.querySelector("#cart__items");
 
@@ -347,10 +339,8 @@ const displayCardContentDeleteBtn = () => {
 };
 
 // ---------------- --------------- ---------------
-
  // -------------------FORM-----------------------
-// Grapping Span Error Messages 
-
+ // ------Grapping Span Error Messages---------- 
     let firstNameErrorMsg = document.querySelector("#firstNameErrorMsg"); 
     let lastNameErrorMsg = document.querySelector("#lastNameErrorMsg");
     let addressErrorMsg = document.querySelector("#addressErrorMsg");
@@ -358,7 +348,7 @@ const displayCardContentDeleteBtn = () => {
     let emailErrorMsg = document.querySelector("#emailErrorMsg");
 
     
-// function of inputs validation
+// -----function of inputs validation REGEX-----
 
 const firstNameCheck =(value)=>{ 
   if(!value.match(/^[a-zA-Z-._àâéèêô´` ñÑî'ùûïÏäëüöÖÄçÀÂÉÈÔÙÛÇ]*$/)){
@@ -400,12 +390,12 @@ const emailCheck =(value)=>{
   };
 };
 
-// inputs form
+//----- grap the form inputs-----
 
 let inputs = document.querySelectorAll('input[type="text"],[type="email"]');
 
 
-// Verification inputs form
+// ----listening the form inputs----
 
   const inputForm = inputs.forEach((input) =>{
    input.addEventListener("input",(e)=>{
@@ -467,6 +457,7 @@ ordered.addEventListener("click",(e) =>{
 getData();
  console.log(sendData); 
 });  
+
 // display a message on click "commander"
 const getData = ()=> {
 

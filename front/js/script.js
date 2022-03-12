@@ -24,7 +24,9 @@ let cardsProductsIndex = document.getElementById("items");
                 
             }
             cardsProductsIndex.innerHTML += product;
-            }));
+            })).catch((e) =>{
+                alert(e)
+            });
     
             
      

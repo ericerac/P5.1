@@ -10,8 +10,6 @@ let colorValue = color.options.value;
 // grap the button "ajouter"
 let AddToCartBtn = document.querySelector("#addToCart");
 
-
-
 // Rtrieve the product Id from URL
 
  const urlData = window.location.search;
@@ -44,6 +42,8 @@ productsTab
 else {
     alert("Erreur lors de la requête")
 }
+}).catch((e) =>{
+    alert(e)
 });
 // Display the product in the DOM
 const display = (productSelect) => {
@@ -139,4 +139,3 @@ AddToCartBtn.addEventListener("click",(e) =>{
     addCart(form);
      
  });
-
