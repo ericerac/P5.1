@@ -3,7 +3,7 @@
 
 // ---- VALIDATION ORDER------
 // retrieve Url order number
- const urlData = window.location.search;
+ const urlData = window.location.search; 
  const urlParams = new URLSearchParams(urlData);
  const productSelectId = urlParams.get(`id`);
   console.log(productSelectId);
