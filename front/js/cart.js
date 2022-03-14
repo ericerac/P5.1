@@ -21,6 +21,7 @@ console.log(cart);
 console.log(JSON.parse(localStorage.getItem("panier")));
 if ( cart == null){
   cart = [];
+  
 }
 //---------------------------------
 
@@ -58,12 +59,15 @@ let products = new Array;
                 displayArticle(productCartData,i);                
                 cartCommande (i,productCartData); 
             } ;
-            
-            getItemQuantity(); 
-            cartTotalQuantity(); 
-            prix();
-            delete_btn();
-            totalPriceProduct();
+            if(cart = []){
+
+            }else{
+              getItemQuantity(); 
+              cartTotalQuantity(); 
+              prix();
+              delete_btn();
+              totalPriceProduct();
+            }
          })
         }})
         .catch((e) =>{
@@ -105,7 +109,7 @@ const prix = () => {
   
 // ---------delete product-------------
 let deleteBtn = document.getElementsByClassName('deleteItem');
-  console.log(deleteBtn);
+  
 
 // ------ listening the delete button-----
 const delete_btn = () => {  
@@ -163,12 +167,8 @@ function removeProduct(product){
 // -------------------------------------------
 
 //  -----if the cart is empty---------
-const cartManagement = () => {
-  if(cart.length < 1){
-cartArray =[0];
-totalQuantity.textContent = "";
-  } 
-}
+
+
 //--------------------------------
 // total of products quantity -----
 const totalProductQuantity = (a,b)=> a+b;
