@@ -10,7 +10,7 @@ let colorValue = color.options.value;
 // grap the button "ajouter"
 let AddToCartBtn = document.querySelector("#addToCart");
 
-// Rtrieve the product Id from URL
+// Retrieve the product Id from URL
 
  const urlData = window.location.search;
  
